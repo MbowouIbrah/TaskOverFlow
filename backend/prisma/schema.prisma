@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  MANAGER
+  COLLABORATOR
+  OBSERVER
+}
+
+enum ProjectStatus {
+  PLANIFIE
+  EN_COURS
+  URGENT
+  SUSPENDU
+  TERMINE
+}
+
+enum TaskStatus {
+  A_FAIRE
+  EN_COURS
+  EN_ATTENTE
+  BLOQUE
+  TERMINE
+}
+
+enum TaskPriority {
+  BASSE
+  MOYENNE
+  HAUTE
+  CRITIQUE
+}
+
+model User {
+  id             String    @id @default(uuid())
+  firstName      String
+  lastName       String
+  email          String    @unique
+  passwordHash   String
+  role           UserRole  @default(COLLABORATOR)
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  lastLoginAt    DateTime?
+
+  // Relations
+  managedProjects   Project[]       @relation("ProjectManager")
+  createdProjects   Project[]       @relation("ProjectCreator")
+  assignedTasks     Task[]          @relation("TaskAssignee")
+  createdTasks      Task[]          @relation("TaskCreator")
+  statusChanges     StatusChange[]  @relation("StatusChanger")
+  milestones        Milestone[]     @relation("MilestoneCreator")
+  notifications     Notification[]
+  projectMemberships ProjectMember[]
+}
+
+model Project {
+  id          String        @id
+  name        String
+  description String?       @db.Text
+  status      ProjectStatus @default(PLANIFIE)
+  category    String?
+  progress    Float         @default(0.0)
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime      @default(now())
+  
+  // Relations
+  managerId   String
+  manager     User          @relation("ProjectManager", fields: [managerId], references: [id])
+  createdById String
+  createdBy   User          @relation("ProjectCreator", fields: [createdById], references: [id])
+  members     ProjectMember[]
+  tasks       Task[]
+  milestones  Milestone[]
+}
+
+model ProjectMember {
+  id        String   @id @default(uuid())
+  projectId String
+  userId    String
+  joinedAt  DateTime @default(now())
+
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+}
+
+model Task {
+  id            String        @id
+  title         String
+  description   String?       @db.Text
+  status        TaskStatus    @default(A_FAIRE)
+  priority      TaskPriority  @default(MOYENNE)
+  plannedMonths Json          
+  deadline      DateTime?
+  createdAt     DateTime      @default(now())
+
+  // Relations
+  projectId     String
+  project       Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assigneeId    String
+  assignee      User          @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  createdById   String
+  createdBy     User          @relation("TaskCreator", fields: [createdById], references: [id])
+  statusHistory StatusChange[]
+
+  @@index([plannedMonths], type: Gin)
+}
+
+model StatusChange {
+  id          String     @id @default(uuid())
+  taskId      String
+  fromStatus  TaskStatus
+  toStatus    TaskStatus
+  comment     String?    @db.Text
+  changedAt   DateTime   @default(now())
+
+  // Relations
+  task        Task       @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  changedById String
+  changedBy   User       @relation("StatusChanger", fields: [changedById], references: [id])
+}
+
+model Milestone {
+  id          String   @id @default(uuid())
+  title       String
+  month       String   // e.g., "2026-07"
+  projectId   String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  project     Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdById String
+  createdBy   User     @relation("MilestoneCreator", fields: [createdById], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

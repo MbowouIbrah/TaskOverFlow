@@ -1,0 +1,91 @@
+{
+  "apps": [
+    {
+      "id": "projets",
+      "name": "Gestion des Projets",
+      "tagline": "Pilotage stratégique des initiatives de Trigenys Group.",
+      "icon": "FolderKanban",
+      "color": "indigo",
+      "path": "/projets",
+      "categories": [
+        {
+          "id": "portfolio",
+          "title": "Portefeuille",
+          "cards": [
+            { "id": "project-list", "title": "Vue d'ensemble", "description": "Consulter et piloter les projets actifs", "icon": "Layout", "path": "/projets", "roles": ["user", "admin"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "taches",
+      "name": "Suivi des Tâches",
+      "tagline": "Gestion opérationnelle et suivi des assignations quotidiennes.",
+      "icon": "CheckSquare",
+      "color": "emerald",
+      "path": "/taches",
+      "categories": [
+        {
+          "id": "operations",
+          "title": "Opérations",
+          "cards": [
+            { "id": "all-tasks", "title": "Tableau de Bord Tâches", "description": "Gérer l'avancement et les priorités", "icon": "ListChecks", "path": "/taches", "roles": ["user", "admin"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "roadmap",
+      "name": "Roadmap Annuelle",
+      "tagline": "Trajectoire et jalons critiques de l'organisation.",
+      "icon": "Milestone",
+      "color": "blue",
+      "path": "/roadmap",
+      "categories": [
+        {
+          "id": "planning",
+          "title": "Planification",
+          "cards": [
+            { "id": "annual-view", "title": "Plan Stratégique 2026", "description": "Vision globale des échéances majeures", "icon": "CalendarRange", "path": "/roadmap", "roles": ["user", "admin"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dashboard",
+      "name": "Cockpit Décisionnel",
+      "tagline": "Analyses de performance et indicateurs de pilotage.",
+      "icon": "Gauge",
+      "color": "#f97316",
+      "path": "/dashboard",
+      "categories": [
+        {
+          "id": "analytics",
+          "title": "Analyses",
+          "cards": [
+            { "id": "kpi-global", "title": "Performance Globale", "description": "Visualiser la santé du portefeuille", "icon": "Activity", "path": "/dashboard", "roles": ["admin"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dev",
+      "name": "Options Développeurs",
+      "tagline": "Outils de test et configuration de l'environnement.",
+      "icon": "Terminal",
+      "color": "#e11d48",
+      "path": "/dev/invitations",
+      "categories": [
+        {
+          "id": "tests",
+          "title": "Tests & Invitations",
+          "cards": [
+            { "id": "send-invite", "title": "Invitation par mail", "description": "Gérer et envoyer des accès par email aux utilisateurs", "icon": "MailPlus", "path": "/dev/invitations", "roles": ["admin"] }
+          ]
+        }
+      ]
+    }
+
+  ]
+}
+
